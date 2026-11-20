@@ -4,15 +4,29 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.115'
 }
 
-// Build number: every build that makes a jar (build, jar, assemble) counts up build.number, and the jar and the
-// version the game shows both carry it: 2.0.0+build.7. mod_version in gradle.properties stays the release number.
-def buildNumberFile = file('build.number')
-def buildNumber = buildNumberFile.exists() ? buildNumberFile.text.trim().toInteger() : 0
+// Every build that makes a jar (build, jar, assemble) bumps mod_version in gradle.properties by one: 2.0.0 -> 2.0.1.
+// Each place rolls over at 10 into the next: 2.0.9 -> 2.1.0, 2.9.9 -> 3.0.0. The jar and the version the game shows
+// both use it.
+def modVersion = mod_version
 if (gradle.startParameter.taskNames.any { def t = it.toLowerCase(); t.endsWith('build') || t.endsWith('jar') || t.endsWith('assemble') }) {
-    buildNumber++
-    buildNumberFile.text = "${buildNumber}\n"
+    def parts = modVersion.tokenize('.').collect { it.toInteger() }
+    while (parts.size() < 3) {
+        parts << 0
+    }
+    parts[2]++
+    if (parts[2] >= 10) {
+        parts[2] = 0
+        parts[1]++
+    }
+    if (parts[1] >= 10) {
+        parts[1] = 0
+        parts[0]++
+    }
+    modVersion = parts.join('.')
+    def props = file('gradle.properties')
+    props.text = props.text.replaceFirst(/(?m)^mod_version=.*$/, "mod_version=${modVersion}")
 }
-version = "${mod_version}+build.${buildNumber}"
+version = modVersion
 group = mod_group_id
 
 base {
