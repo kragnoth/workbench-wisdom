@@ -114,6 +114,8 @@ Everything else is datapack data, so it can ship with a pack and changes on `/re
   (`workbenchwisdom:cutting/<namespace>/<result>_from_<input>`, `workbenchwisdom:back_to_block/<namespace>/<piece>`).
 
 ## Building
-`./gradlew build`; the jar is in `build/libs`. `./gradlew runGameTestServer` runs the GameTests.
+`./gradlew build`; the jar is in `build/libs`. Every build counts up `build.number`, and the jar and the version the
+game shows carry it (`workbenchwisdom-2.0.0+build.7.jar`); `mod_version` in `gradle.properties` is the release number.
+Commit `build.number` with your changes so the count carries on from any machine. `./gradlew runGameTestServer` runs the GameTests.
 
 MIT licensed.

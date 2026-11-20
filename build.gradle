@@ -4,7 +4,15 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.115'
 }
 
-version = mod_version
+// Build number: every build that makes a jar (build, jar, assemble) counts up build.number, and the jar and the
+// version the game shows both carry it: 2.0.0+build.7. mod_version in gradle.properties stays the release number.
+def buildNumberFile = file('build.number')
+def buildNumber = buildNumberFile.exists() ? buildNumberFile.text.trim().toInteger() : 0
+if (gradle.startParameter.taskNames.any { def t = it.toLowerCase(); t.endsWith('build') || t.endsWith('jar') || t.endsWith('assemble') }) {
+    buildNumber++
+    buildNumberFile.text = "${buildNumber}\n"
+}
+version = "${mod_version}+build.${buildNumber}"
 group = mod_group_id
 
 base {
@@ -67,7 +75,7 @@ tasks.withType(ProcessResources).configureEach {
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version            : mod_version,
+            mod_version            : version.toString(),
             mod_authors            : mod_authors,
             mod_description        : mod_description
     ]
@@ -81,7 +89,10 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-// Ship the license inside the jar.
+// Ship the license inside the jar, and clear out older builds' jars so build/libs holds only the newest.
 jar {
     from("LICENSE")
+    doFirst {
+        delete fileTree(destinationDirectory) { include "${mod_id}-*.jar" }
+    }
 }
