@@ -90,6 +90,16 @@ public final class BenchTests {
         check(h, bench(h, new ItemStack(Items.DIAMOND_PICKAXE), new ItemStack(Items.IRON_HELMET)).mode() == BenchAction.Mode.NONE,
                 "tool and armour don't pair");
 
+        // armour ranked by the game: total protection, toughness, knockback resistance, durability
+        expect(h, "leather helmet + gold", bench(h, new ItemStack(Items.LEATHER_HELMET), new ItemStack(Items.GOLD_INGOT, 5)).result(),
+                Items.GOLDEN_HELMET, 1);
+        expect(h, "gold chestplate + iron", bench(h, new ItemStack(Items.GOLDEN_CHESTPLATE), new ItemStack(Items.IRON_INGOT, 8)).result(),
+                Items.CHAINMAIL_CHESTPLATE, 1);
+        expect(h, "chainmail boots + iron", bench(h, new ItemStack(Items.CHAINMAIL_BOOTS), new ItemStack(Items.IRON_INGOT, 4)).result(),
+                Items.IRON_BOOTS, 1);
+        expect(h, "wooden sword + cobblestone", bench(h, new ItemStack(Items.WOODEN_SWORD), new ItemStack(Items.COBBLESTONE, 2)).result(),
+                Items.STONE_SWORD, 1);
+
         // and through the menu, as a player would
         Player player = h.makeMockPlayer(GameType.SURVIVAL);
         ReforgingMenu menu = new ReforgingMenu(1, player.getInventory());

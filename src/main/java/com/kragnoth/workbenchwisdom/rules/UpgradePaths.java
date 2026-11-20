@@ -16,15 +16,16 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Ingredient;
 
 /**
- * Datapack data under {@code data/<namespace>/workbenchwisdom/}:
+ * Overrides for the upgrades the bench works out from the game ({@link com.kragnoth.workbenchwisdom.gear.GearTiers}).
+ * Workbench Wisdom ships none; packs add them under {@code data/<namespace>/workbenchwisdom/}:
  * <ul>
  *   <li>{@code upgrade_paths/*.json}: {@code {"materials": {"iron": [{"to": "diamond", "ingredient": {...}}], ...}}}.
  *       Gear is matched by name, {@code <material>_<type>} (iron_pickaxe, refined_obsidian_helmet). Each material
  *       lists what it upgrades into and what the bench takes to do it; an empty list ends a line. Files merge in pack
  *       order and a later file's entry for a material replaces an earlier one.</li>
  *   <li>{@code gear_types/*.json}: {@code {"tools": {"paxel": 7, ...}, "armor": {"helmet": 5, ...}}}: the type
- *       names gear is matched by, each with how much material to charge when the new item has no crafting recipe to
- *       go by. Merged the same way.</li>
+ *       names gear is matched by (beyond vanilla's tool kinds and armour slots), each with how much material to charge
+ *       when the new item has no crafting recipe to go by. Merged the same way.</li>
  * </ul>
  */
 public final class UpgradePaths extends SimpleJsonResourceReloadListener {
@@ -33,13 +34,28 @@ public final class UpgradePaths extends SimpleJsonResourceReloadListener {
     public record Data(Map<String, List<Step>> materials, Map<String, Integer> tools, Map<String, Integer> armor) {
         public static final Data EMPTY = new Data(Map.of(), Map.of(), Map.of());
 
-        /** The fallback cost for a type ("pickaxe"), 3 when it isn't listed. */
+        /** What vanilla's own recipes take, for gear whose recipe can't be read (chainmail has none). */
+        private static final Map<String, Integer> DEFAULT_COSTS = Map.of("pickaxe", 3, "axe", 3, "shovel", 1, "hoe", 2, "sword", 2,
+                "helmet", 5, "chestplate", 8, "leggings", 7, "boots", 4);
+
+        /** The cost for a type ("pickaxe") when the item's crafting recipe can't tell: the data's, vanilla's, or 3. */
         public int cost(String type) {
             Integer c = tools.get(type);
             if (c == null) {
                 c = armor.get(type);
             }
+            if (c == null) {
+                c = DEFAULT_COSTS.get(type);
+            }
             return c == null ? 3 : Math.max(1, Math.min(64, c));
+        }
+
+        /** Every type name gear can be matched by for upgrade paths: vanilla's five tools and four armour slots, plus the data's. */
+        public java.util.Set<String> typeNames() {
+            java.util.Set<String> out = new java.util.HashSet<>(DEFAULT_COSTS.keySet());
+            out.addAll(tools.keySet());
+            out.addAll(armor.keySet());
+            return out;
         }
     }
 

@@ -35,16 +35,18 @@ right:
 else that wears out and takes enchantments (tools, swords, bows, tridents, maces, shields, shears, fishing rods,
 any mod's weapons) is a tool. Gear made unbreakable by a "no durability" mod still counts.
 
-**Upgrade paths** come two ways:
-- **By name**, from datapack data (see below): `iron_pickaxe` upgrades into `diamond_pickaxe` because `iron` lists
-  `diamond` as its next material. The defaults cover vanilla (wood > stone > iron > diamond, leather > chainmail >
-  iron, gold > diamond, flint > copper > bronze > iron) plus Mekanism, Applied Energistics 2, Ender IO and Just Dire
-  Things materials.
-- **By tier**, for every other tool and armour piece (`upgrades.automatic`): each item goes up to the next tier of
-  its kind. Pickaxes, axes, shovels, hoes and swords are grouped by what they are, other tools by name ending (paxel,
-  hammer...), armour by slot. Tools rank by what they can mine, armour by protection then toughness. The material is
-  the new tier's repair material. Where several mods have gear at the next tier, the bench offers the one from the
-  same mod first, then vanilla's.
+**Upgrade paths come from the game itself**, so they fit whatever mods the pack has. Each tool or armour piece
+goes up to the next tier of its kind, for the new tier's repair material (what the anvil mends it with):
+- **Tools** rank by what they can mine (iron ore, diamond ore, obsidian): wood and gold → stone → iron → diamond.
+  Pickaxes, axes, shovels, hoes and swords are grouped by what they are, any other tiered tool by the last word of its
+  name (every mod's `_paxel` together).
+- **Armour** ranks by its material across the whole set: total protection, then toughness, knockback resistance and
+  durability. In vanilla that's leather → gold → chainmail → iron → diamond. A lone piece like the turtle shell isn't
+  a step on the ladder, but upgrades onward itself.
+- Where several mods have gear at the next tier, the bench offers the one from the same mod first, then vanilla's.
+  Netherite stays the smithing table's.
+
+Packs can override any of it with datapack data (see below).
 
 Gear built from parts (Tinkers' Construct, Silent Gear) can't be upgraded or salvaged, but can still trade
 enchantments.
@@ -90,19 +92,19 @@ exactly what the server will do: it reads the same rules the server sends.
 ## For pack makers
 Everything else is datapack data, so it can ship with a pack and changes on `/reload`.
 
-- **Upgrade paths**, `data/<namespace>/workbenchwisdom/upgrade_paths/*.json`:
+- **Upgrade paths** (overrides; none ship with the mod), `data/<namespace>/workbenchwisdom/upgrade_paths/*.json`:
   ```json
   { "materials": {
-      "iron":    [ { "to": "diamond", "ingredient": { "tag": "c:gems/diamond" } } ],
-      "diamond": []
+      "copper": [ { "to": "bronze", "ingredient": { "tag": "c:ingots/bronze" } } ],
+      "mekasuit": []
   } }
   ```
-  Gear is matched by name, `<material>_<type>`. An empty list ends a line (the material still counts, so nothing
-  upgrades past it by tier). Entries naming items from mods that aren't installed are skipped. A later pack's entry
-  for a material replaces an earlier one; the defaults are `workbenchwisdom:upgrade_paths/common` and `/mods`.
-- **Gear types**, `data/<namespace>/workbenchwisdom/gear_types/*.json`: `{"tools": {"paxel": 7}, "armor": {"helmet": 5}}`.
-  The name endings gear is recognised by, each with the material cost to charge when the new item has no crafting
-  recipe to go by.
+  Gear is matched by name, `<material>_<type>`, and named gear follows these paths instead of the game's tiers. An
+  empty list stops a line: that material doesn't upgrade at all. Entries naming items from mods that aren't installed
+  are skipped. A later pack's entry for a material replaces an earlier one.
+- **Gear types**, `data/<namespace>/workbenchwisdom/gear_types/*.json`: `{"tools": {"paxel": 7}, "armor": {"ring": 1}}`.
+  Extra type names for upgrade paths to match by (vanilla's tool kinds and armour slots are built in), each with the
+  material cost to charge when the new item has no crafting recipe to read it from.
 - **Upgrade recipes**, `"type": "workbenchwisdom:upgrade"`: `base`, `addition` (ingredients), `count`, `result`.
   These come before anything the bench works out for the same item.
 - **Salvage recipes**, `"type": "workbenchwisdom:salvage"`: `input` (ingredient), `result` (item stack, given per

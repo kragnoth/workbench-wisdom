@@ -25,9 +25,9 @@ import net.minecraft.world.level.Level;
 /**
  * Works out the {@link BenchRules} from what's loaded.
  *
- * <p><b>Upgrades</b>, first match wins for each item: datapack {@code workbenchwisdom:upgrade} recipes; then the
- * upgrade paths ({@link UpgradePaths}), by item name; then, for gear the paths don't name, the next tier up of its
- * kind ({@link GearTiers}) for that tier's repair material. Each upgrade costs as much material as crafting the new
+ * <p><b>Upgrades</b>, first match wins for each item: datapack {@code workbenchwisdom:upgrade} recipes; then any
+ * upgrade paths a pack added ({@link UpgradePaths}), by item name; then, for everything else, the next tier up of its
+ * kind as the game itself ranks it ({@link GearTiers}), for that tier's repair material. Each upgrade costs as much material as crafting the new
  * item takes (3 diamonds for a pickaxe), or the gear type's listed cost when the new item has no crafting recipe.
  * Upgrades the smithing table already does (diamond to netherite) stay the smithing table's.
  *
@@ -42,7 +42,7 @@ public final class RulesBuilder {
         long start = System.nanoTime();
         RecipeIndex idx = RecipeIndex.of(level);
         UpgradePaths.Data data = UpgradePaths.current();
-        List<GearTiers.Entry> tiers = GearTiers.scan(new ArrayList<>(data.tools().keySet()));
+        List<GearTiers.Entry> tiers = GearTiers.scan();
 
         List<BenchRules.Upgrade> upgrades = new ArrayList<>();
         Set<Item> upgradeDone = new HashSet<>();
@@ -151,8 +151,7 @@ public final class RulesBuilder {
 
     /** Upgrades from the upgrade paths, matching gear by name: {@code <material>_<type>}. Adds every named item to {@code named}. */
     private static List<BenchRules.Upgrade> pathUpgrades(RecipeIndex idx, UpgradePaths.Data data, Set<Item> named) {
-        List<String> types = new ArrayList<>(data.tools().keySet());
-        types.addAll(data.armor().keySet());
+        List<String> types = new ArrayList<>(data.typeNames());
         types.sort(Comparator.comparingInt(String::length).reversed()); // "chestplate" before "plate"
         // material -> type -> items
         Map<String, Map<String, List<Item>>> found = new LinkedHashMap<>();
