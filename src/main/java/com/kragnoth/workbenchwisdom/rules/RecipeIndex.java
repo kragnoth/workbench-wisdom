@@ -173,6 +173,61 @@ public final class RecipeIndex {
         return OptionalInt.of(best);
     }
 
+    /** What crafting an item takes most of, and how many. */
+    public record Material(Ingredient ingredient, int count) {}
+
+    /**
+     * What a piece of gear is made of, read from its cheapest crafting recipe as loaded (so a KubeJS or datapack
+     * recipe that swaps blocks for ingots is what counts): its repair material if the recipe uses it, otherwise
+     * whatever ingredient the recipe uses most of (sticks aside). Null when nothing crafts it.
+     */
+    public Material material(Item result, Ingredient repair) {
+        OptionalInt made = madeFrom(result, repair);
+        if (made.isEmpty()) {
+            return null;
+        }
+        if (made.getAsInt() > 0) {
+            return new Material(repair, made.getAsInt());
+        }
+        Material best = null;
+        for (CraftingRecipe r : craftedBy.get(result)) {
+            Map<String, Material> groups = new java.util.LinkedHashMap<>();
+            for (Ingredient i : r.getIngredients()) {
+                ItemStack[] items = i.getItems();
+                if (i.isEmpty() || items.length == 0 || items[0].is(net.minecraft.world.item.Items.STICK)) {
+                    continue;
+                }
+                String key = java.util.Arrays.stream(items).map(st -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(st.getItem()).toString())
+                        .sorted().collect(java.util.stream.Collectors.joining(","));
+                groups.merge(key, new Material(i, 1), (x, y) -> new Material(x.ingredient(), x.count() + 1));
+            }
+            for (Material m : groups.values()) {
+                if (best == null || m.count() > best.count()) {
+                    best = m;
+                }
+            }
+        }
+        return best;
+    }
+
+    /** Whether an item is crafted from another piece of gear (waxed copper armour from the plain piece): a variant, not a tier. */
+    public boolean isMadeFromGear(Item result) {
+        List<CraftingRecipe> recipes = craftedBy.get(result);
+        if (recipes == null) {
+            return false;
+        }
+        for (CraftingRecipe r : recipes) {
+            for (Ingredient i : r.getIngredients()) {
+                for (ItemStack s : i.getItems()) {
+                    if (com.kragnoth.workbenchwisdom.gear.Gear.isGear(s)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean overlaps(Ingredient i, ItemStack[] mats) {
         for (ItemStack m : mats) {
             if (i.test(m)) {

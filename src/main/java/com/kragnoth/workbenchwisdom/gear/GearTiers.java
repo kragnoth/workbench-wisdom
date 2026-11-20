@@ -28,9 +28,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * <ul>
  *   <li>Tools rank by what they can mine: iron ore, diamond ore, obsidian. Wood and gold mine the same, so they're one
  *       tier; so are a mod's copper and stone.</li>
- *   <li>Armour ranks by its material across the whole set (total protection, then toughness, then knockback
- *       resistance, and durability last), so a material is one tier in every slot: leather, gold, chainmail, iron,
- *       diamond.</li>
+ *   <li>Armour ranks by what its whole set gives, read from the pieces' own stats: armour plus toughness (plus a
+ *       little for knockback resistance), durability breaking ties. A material is one tier in every slot: leather,
+ *       gold, chainmail, iron, diamond.</li>
  * </ul>
  * Each entry's material is its repair ingredient: what the anvil mends it with.
  */
@@ -51,17 +51,44 @@ public final class GearTiers {
     /** Every tiered tool and armour piece in the game. */
     public static List<Entry> scan() {
         List<Entry> out = new ArrayList<>();
-        // armour materials with more than one piece: a lone piece (the turtle shell) is a special item, not a tier to
-        // upgrade iron into, though it can still upgrade onwards itself
+        // each armour material's whole-set protection, and each piece's own
         Map<Object, Integer> pieces = new java.util.HashMap<>();
+        Map<Object, Double> sets = new java.util.HashMap<>();
+        Map<Item, Double> own = new java.util.HashMap<>();
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof ArmorItem a && a.getType() != ArmorItem.Type.BODY) {
                 pieces.merge(a.getMaterial(), 1, Integer::sum);
+                try {
+                    double p = protection(item);
+                    own.put(item, p);
+                    sets.merge(a.getMaterial(), p, Double::sum);
+                } catch (RuntimeException ignored) {
+                    // a modded piece that can't report its stats outside the game: it counts for nothing
+                }
             }
+        }
+        // A lone piece (the turtle shell) has no set to compare. It ranks with the best set whose piece in the same
+        // slot it matches (a turtle shell protects like an iron helmet), and it's never upgraded into: it's a special
+        // item, not a tier, though it upgrades onward itself.
+        Map<Item, Double> setScore = new java.util.HashMap<>();
+        for (Item item : own.keySet()) {
+            ArmorItem a = (ArmorItem) item;
+            if (pieces.get(a.getMaterial()) >= 2) {
+                setScore.put(item, sets.get(a.getMaterial()));
+                continue;
+            }
+            double best = 0;
+            for (Map.Entry<Item, Double> other : own.entrySet()) {
+                ArmorItem b = (ArmorItem) other.getKey();
+                if (b.getType() == a.getType() && pieces.get(b.getMaterial()) >= 2 && other.getValue() <= own.get(item) + 1e-9) {
+                    best = Math.max(best, sets.get(b.getMaterial()));
+                }
+            }
+            setScore.put(item, best);
         }
         for (Item item : BuiltInRegistries.ITEM) {
             try {
-                Entry e = entry(item);
+                Entry e = entry(item, setScore);
                 if (e != null) {
                     boolean lone = item instanceof ArmorItem a && pieces.getOrDefault(a.getMaterial(), 0) < 2;
                     out.add(lone ? new Entry(e.item(), e.kind(), e.rank(), e.material(), false) : e);
@@ -73,18 +100,14 @@ public final class GearTiers {
         return out;
     }
 
-    private static Entry entry(Item item) {
+    private static Entry entry(Item item, Map<Item, Double> setScore) {
         if (item instanceof ArmorItem armor) {
             if (armor.getType() == ArmorItem.Type.BODY) {
                 return null;
             }
-            ArmorMaterial m = armor.getMaterial().value();
-            int total = 0;
-            for (ArmorItem.Type t : new ArmorItem.Type[] {ArmorItem.Type.HELMET, ArmorItem.Type.CHESTPLATE, ArmorItem.Type.LEGGINGS, ArmorItem.Type.BOOTS}) {
-                total += m.getDefense(t);
-            }
             int durability = Math.min(9999, item.getDefaultInstance().getMaxDamage());
-            double rank = total * 1000.0 + m.toughness() * 10.0 + m.knockbackResistance() + durability / 1_000_000.0;
+            double rank = setScore.getOrDefault(item, 0.0) * 1000.0 + durability / 1_000_000.0;
+            ArmorMaterial m = armor.getMaterial().value();
             return new Entry(item, "armor:" + armor.getType().getName(), rank, m.repairIngredient().get(), true);
         }
         if (item instanceof TieredItem tiered) {
@@ -103,6 +126,29 @@ public final class GearTiers {
             return new Entry(item, "tool:" + kind, level, tier.getRepairIngredient(), true);
         }
         return null;
+    }
+
+    /**
+     * What a piece protects, as its tooltip shows it: armour plus toughness (each point of toughness counts like a
+     * point of armour), plus ten points per whole of knockback resistance. Read from the item's own attribute
+     * modifiers, so a mod that sets its stats there rather than on the armour material is ranked by what it really
+     * gives.
+     */
+    private static double protection(Item item) {
+        double total = 0;
+        for (var e : item.getDefaultInstance().getAttributeModifiers().modifiers()) {
+            if (e.modifier().operation() != net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE) {
+                continue;
+            }
+            double v = e.modifier().amount();
+            if (e.attribute().is(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR)
+                    || e.attribute().is(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS)) {
+                total += v;
+            } else if (e.attribute().is(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE)) {
+                total += v * 10;
+            }
+        }
+        return total;
     }
 
     private static String lastWord(Item item) {

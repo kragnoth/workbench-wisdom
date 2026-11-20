@@ -28,7 +28,9 @@ import net.minecraft.world.level.Level;
  * <p><b>Upgrades</b>, first match wins for each item: datapack {@code workbenchwisdom:upgrade} recipes; then any
  * upgrade paths a pack added ({@link UpgradePaths}), by item name; then, for everything else, the next tier up of its
  * kind as the game itself ranks it ({@link GearTiers}), for that tier's repair material. Each upgrade costs as much material as crafting the new
- * item takes (3 diamonds for a pickaxe), or the gear type's listed cost when the new item has no crafting recipe.
+ * item takes, in what it takes (3 diamonds for a pickaxe; ingredients as loaded, KubeJS changes included), or the
+ * new tier's repair material at vanilla's counts when the new item has no crafting recipe. Gear crafted from other
+ * gear (waxed copper armour) is a variant, never a step up.
  * Upgrades the smithing table already does (diamond to netherite) stay the smithing table's.
  *
  * <p><b>Salvage</b>: datapack {@code workbenchwisdom:salvage} recipes; then gear, into its repair material, as much as
@@ -66,12 +68,14 @@ public final class RulesBuilder {
             }
             upgradeDone.addAll(named);
             if (Config.AUTO_UPGRADES.get()) {
-                for (Map.Entry<GearTiers.Entry, List<GearTiers.Entry>> e : GearTiers.next(tiers, upgradeDone, idx::isSmithed).entrySet()) {
+                for (Map.Entry<GearTiers.Entry, List<GearTiers.Entry>> e : GearTiers.next(tiers, upgradeDone, i -> idx.isSmithed(i) || idx.isMadeFromGear(i)).entrySet()) {
                     for (GearTiers.Entry to : e.getValue()) {
                         Item from = e.getKey().item();
                         if (from != to.item() && !idx.smithingMakes(from, to.item())) {
-                            int cost = cost(idx, data, to.item(), to.material(), to.type());
-                            upgrades.add(new BenchRules.Upgrade(from, to.item(), to.material(), cost));
+                            RecipeIndex.Material m = idx.material(to.item(), to.material());
+                            Ingredient pay = m != null ? m.ingredient() : to.material();
+                            int cost = m != null ? m.count() : data.cost(to.type());
+                            upgrades.add(new BenchRules.Upgrade(from, to.item(), pay, cost));
                             automatic++;
                         }
                     }
@@ -217,15 +221,13 @@ public final class RulesBuilder {
             return Config.SALVAGE_SMITHED.get() && one.length > 0
                     ? new BenchRules.Salvage(e.item(), one[0].copyWithCount(1), 1, true) : null;
         }
-        ItemStack[] mats = e.material().getItems();
-        if (mats.length == 0) {
-            return null;
+        RecipeIndex.Material m = idx.material(e.item(), e.material());
+        Ingredient material = m != null ? m.ingredient() : e.material();
+        ItemStack[] mats = material.getItems();
+        if (mats.length == 0 || idx.isMadeFromGear(e.item())) {
+            return null; // nothing to give back, or a variant of another piece (salvage that one instead)
         }
-        OptionalInt made = idx.madeFrom(e.item(), e.material());
-        if (made.isPresent() && made.getAsInt() == 0) {
-            return null; // crafted from something else entirely: no telling what it's "made of"
-        }
-        int n = made.isPresent() ? made.getAsInt() : data.cost(e.type());
+        int n = m != null ? m.count() : data.cost(e.type());
         int back = (int) Math.floor(n * returns + 1e-9);
         return back > 0 ? new BenchRules.Salvage(e.item(), mats[0].copyWithCount(1), back, true) : null;
     }
