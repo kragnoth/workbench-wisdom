@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:smithing_table"
+    },
+    {
+      "item": "minecraft:grindstone"
+    },
+    {
+      "tag": "c:storage_blocks/iron"
+    }
+  ],
+  "result": {
+    "id": "workbenchwisdom:reforging_bench",
+    "count": 1
+  }
+}

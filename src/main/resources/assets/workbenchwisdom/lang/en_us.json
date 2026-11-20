@@ -1,0 +1,15 @@
+{
+  "block.workbenchwisdom.reforging_bench": "Reforging Bench",
+  "container.workbenchwisdom.reforging_bench": "Reforge",
+  "container.workbenchwisdom.needs_more": "Needs %s more %s",
+  "container.workbenchwisdom.uses": "Uses %s %s",
+  "jei.workbenchwisdom.upgrade": "Reforging: Upgrade",
+  "jei.workbenchwisdom.keeps": "Keeps its enchantments",
+  "jei.workbenchwisdom.transfer": "Reforging: Enchantment Transfer",
+  "jei.workbenchwisdom.transfer_note": "Any tool to tool, armour to armour",
+  "workbenchwisdom.configuration.title": "Workbench Wisdom",
+  "container.workbenchwisdom.salvage": "Salvage",
+  "container.workbenchwisdom.salvage_xp": "Salvage: %s experience back",
+  "jei.workbenchwisdom.salvage": "Reforging: Salvage",
+  "jei.workbenchwisdom.salvage_note": "Unworn; worn gear gives less"
+}

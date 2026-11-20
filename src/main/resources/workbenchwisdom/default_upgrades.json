@@ -1,0 +1,347 @@
+{
+  "_readme": [
+    "Reforging Bench upgrades from one tier to the next. Items are matched by name: <material>_<type>, e.g. iron_pickaxe,",
+    "refined_obsidian_helmet. 'chain' maps each material to the materials it upgrades into and what is added at the bench",
+    "(an item or a tag, as in recipe JSON). An empty list ends a chain (the material is still recognised as an upgrade target).",
+    "'costs' is how many of that material each kind of item takes, matching what crafting it costs; others use 'default_cost'.",
+    "Upgrades the smithing table already does (diamond to netherite with the template) are left to it.",
+    "Changes take effect on /reload or the next world load. Delete this file to get the defaults back."
+  ],
+  "chain": {
+    "wooden": [
+      {
+        "next": "stone",
+        "ingredient": {
+          "tag": "c:cobblestones"
+        }
+      }
+    ],
+    "wood": [
+      {
+        "next": "stone",
+        "ingredient": {
+          "tag": "c:cobblestones"
+        }
+      }
+    ],
+    "stone": [
+      {
+        "next": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "leather": [
+      {
+        "next": "chainmail",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "chainmail": [
+      {
+        "next": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "flint": [
+      {
+        "next": "copper",
+        "ingredient": {
+          "tag": "c:ingots/copper"
+        }
+      }
+    ],
+    "copper": [
+      {
+        "next": "bronze",
+        "ingredient": {
+          "tag": "c:ingots/bronze"
+        }
+      },
+      {
+        "next": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "bronze": [
+      {
+        "next": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "iron": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      },
+      {
+        "next": "osmium",
+        "ingredient": {
+          "tag": "c:ingots/osmium"
+        }
+      }
+    ],
+    "golden": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "gold": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "diamond": [
+      {
+        "next": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "certus_quartz": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "nether_quartz": [
+      {
+        "next": "certus_quartz",
+        "ingredient": {
+          "item": "ae2:certus_quartz_crystal"
+        }
+      }
+    ],
+    "fluix": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "lapis_lazuli": [
+      {
+        "next": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "osmium": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "steel": [
+      {
+        "next": "dark_steel",
+        "ingredient": {
+          "item": "enderio:dark_steel_ingot"
+        }
+      }
+    ],
+    "armor_steel": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "refined_glowstone": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "refined_obsidian": [
+      {
+        "next": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "emerald": [
+      {
+        "next": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "cardboard": [
+      {
+        "next": "leather",
+        "ingredient": {
+          "tag": "c:leathers"
+        }
+      }
+    ],
+    "cognitive": [
+      {
+        "next": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "dark_steel": [
+      {
+        "next": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "ferricore": [
+      {
+        "next": "blazegold",
+        "ingredient": {
+          "item": "justdirethings:blazegold_ingot"
+        }
+      }
+    ],
+    "blazegold": [
+      {
+        "next": "celestigem",
+        "ingredient": {
+          "item": "justdirethings:celestigem"
+        }
+      }
+    ],
+    "celestigem": [
+      {
+        "next": "eclipsealloy",
+        "ingredient": {
+          "item": "justdirethings:eclipsealloy_ingot"
+        }
+      }
+    ],
+    "eclipsealloy": [],
+    "armor_faraday": [
+      {
+        "next": "armor_steel",
+        "ingredient": {
+          "tag": "c:ingots/steel"
+        }
+      }
+    ],
+    "copper_diving": [
+      {
+        "next": "netherite_diving",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "netherite_diving": [],
+    "netherite": [],
+    "mekasuit": [],
+    "quantum": [],
+    "hazmat": [],
+    "rooted": [],
+    "turtle": []
+  },
+  "costs": {
+    "pickaxe": 3,
+    "axe": 3,
+    "shovel": 1,
+    "hoe": 2,
+    "sword": 2,
+    "helmet": 5,
+    "chestplate": 8,
+    "leggings": 7,
+    "boots": 4,
+    "paxel": 7,
+    "aiot": 9,
+    "sickle": 3,
+    "scythe": 4,
+    "hammer": 6,
+    "hatchet": 3,
+    "knife": 1,
+    "dagger": 1,
+    "machete": 2,
+    "spear": 2,
+    "lance": 3,
+    "mace": 3,
+    "flail": 3,
+    "staff": 2,
+    "shears": 2,
+    "wrench": 4,
+    "bow": 3,
+    "crossbow": 3,
+    "shield": 1,
+    "gloves": 4,
+    "bracers": 4,
+    "belt": 3,
+    "amulet": 2,
+    "ring": 1,
+    "elytra": 8
+  },
+  "default_cost": 3,
+  "tool_types": [
+    "pickaxe",
+    "axe",
+    "shovel",
+    "hoe",
+    "sword",
+    "paxel",
+    "sickle",
+    "scythe",
+    "hammer",
+    "aiot",
+    "dagger",
+    "staff",
+    "mace",
+    "bow",
+    "crossbow",
+    "spear",
+    "lance",
+    "flail",
+    "knife",
+    "hatchet",
+    "machete",
+    "wrench",
+    "shears"
+  ],
+  "armor_types": [
+    "helmet",
+    "chestplate",
+    "leggings",
+    "boots",
+    "shield",
+    "elytra",
+    "gloves",
+    "bracers",
+    "belt",
+    "amulet",
+    "ring"
+  ]
+}
