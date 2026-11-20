@@ -2,9 +2,8 @@ modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
 
-# Applies the stonecutter and smithing changes once a (re)load has bound the item tags (see ReloadMixin).
-[[mixins]]
-config="workbenchwisdom.mixins.json"
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
 
 [[mods]]
 modId="${mod_id}"

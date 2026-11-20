@@ -1,4 +1,4 @@
-package com.kragnoth.workbenchwisdom;
+package com.kragnoth.workbenchwisdom.bench;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CraftingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** The Reforging Bench: tier upgrades and enchantment transfers in one place. Keeps nothing; like a smithing table. */
+/** The Reforging Bench. Keeps nothing, like a smithing table. */
 public class ReforgingBenchBlock extends CraftingTableBlock {
     public static final MapCodec<ReforgingBenchBlock> CODEC = simpleCodec(ReforgingBenchBlock::new);
     private static final Component TITLE = Component.translatable("container.workbenchwisdom.reforging_bench");

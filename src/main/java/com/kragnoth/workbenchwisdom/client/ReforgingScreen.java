@@ -1,7 +1,7 @@
 package com.kragnoth.workbenchwisdom.client;
 
-import com.kragnoth.workbenchwisdom.ReforgingMenu;
 import com.kragnoth.workbenchwisdom.WorkbenchWisdom;
+import com.kragnoth.workbenchwisdom.bench.ReforgingMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.network.chat.Component;
@@ -9,9 +9,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-/** The Reforging Bench: item, plus what's added, gives the result; under it, what it costs (or what's missing). */
+/** The Reforging Bench: item, plus what's added, gives the result; under it, what it costs, takes or gives back. */
 public class ReforgingScreen extends ItemCombinerScreen<ReforgingMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WorkbenchWisdom.MODID, "textures/gui/reforging_bench.png");
+    private static final ResourceLocation TEXTURE = WorkbenchWisdom.id("textures/gui/reforging_bench.png");
     private static final ResourceLocation ERROR = ResourceLocation.withDefaultNamespace("container/smithing/error");
     private static final int GREEN = 0x80FF20;
     private static final int RED = 0xFF6060;
@@ -33,27 +33,32 @@ public class ReforgingScreen extends ItemCombinerScreen<ReforgingMenu> {
         super.renderLabels(g, mouseX, mouseY);
         Component line = null;
         int colour = GREEN;
-        if (menu.mode() == ReforgingMenu.TRANSFER) {
-            int cost = menu.cost();
-            boolean creative = minecraft.player.getAbilities().instabuild;
-            if (cost > 0) {
-                line = Component.translatable("container.repair.cost", cost);
-                colour = creative || minecraft.player.experienceLevel >= cost ? GREEN : RED;
-            }
-        } else if (menu.mode() == ReforgingMenu.SALVAGE) {
-            line = Component.translatable(menu.cost() > 0 ? "container.workbenchwisdom.salvage_xp" : "container.workbenchwisdom.salvage", menu.cost());
-        } else if (menu.mode() == ReforgingMenu.UPGRADE) {
-            var r = menu.upgrade();
-            if (r.isPresent()) {
-                ItemStack[] mats = r.get().addition().getItems();
-                Component name = mats.length > 0 ? mats[0].getHoverName() : Component.literal("?");
-                if (menu.cost() < 0) {
-                    line = Component.translatable("container.workbenchwisdom.needs_more", -menu.cost(), name);
-                    colour = RED;
-                } else {
-                    line = Component.translatable("container.workbenchwisdom.uses", r.get().count(), name);
+        switch (menu.mode()) {
+            case TRANSFER -> {
+                int cost = menu.number();
+                if (cost > 0) {
+                    line = Component.translatable("container.repair.cost", cost);
+                    boolean ok = minecraft.player.getAbilities().instabuild || minecraft.player.experienceLevel >= cost;
+                    colour = ok ? GREEN : RED;
                 }
             }
+            case UPGRADE -> {
+                ItemStack[] mats = menu.action().material().getItems();
+                Component name = mats.length > 0 ? mats[0].getHoverName() : Component.literal("?");
+                if (menu.number() > 0) {
+                    line = Component.translatable("container.workbenchwisdom.needs_more", menu.number(), name);
+                    colour = RED;
+                } else {
+                    line = Component.translatable("container.workbenchwisdom.uses", menu.action().addUse(), name);
+                }
+            }
+            case SALVAGE -> {
+                int used = menu.uses();
+                line = menu.number() > 0 ? Component.translatable("container.workbenchwisdom.salvage_xp", menu.number())
+                        : used > 1 ? Component.translatable("container.workbenchwisdom.salvage_uses", used)
+                        : Component.translatable("container.workbenchwisdom.salvage");
+            }
+            case NONE -> { }
         }
         if (line != null) {
             int w = font.width(line);

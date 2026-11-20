@@ -1,0 +1,122 @@
+{
+  "materials": {
+    "certus_quartz": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "nether_quartz": [
+      {
+        "to": "certus_quartz",
+        "ingredient": {
+          "item": "ae2:certus_quartz_crystal"
+        }
+      }
+    ],
+    "fluix": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "armor_steel": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "refined_glowstone": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "refined_obsidian": [
+      {
+        "to": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "cardboard": [
+      {
+        "to": "leather",
+        "ingredient": {
+          "tag": "c:leathers"
+        }
+      }
+    ],
+    "cognitive": [
+      {
+        "to": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "dark_steel": [
+      {
+        "to": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "ferricore": [
+      {
+        "to": "blazegold",
+        "ingredient": {
+          "item": "justdirethings:blazegold_ingot"
+        }
+      }
+    ],
+    "blazegold": [
+      {
+        "to": "celestigem",
+        "ingredient": {
+          "item": "justdirethings:celestigem"
+        }
+      }
+    ],
+    "celestigem": [
+      {
+        "to": "eclipsealloy",
+        "ingredient": {
+          "item": "justdirethings:eclipsealloy_ingot"
+        }
+      }
+    ],
+    "eclipsealloy": [],
+    "armor_faraday": [
+      {
+        "to": "armor_steel",
+        "ingredient": {
+          "tag": "c:ingots/steel"
+        }
+      }
+    ],
+    "copper_diving": [
+      {
+        "to": "netherite_diving",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "netherite_diving": [],
+    "mekasuit": [],
+    "quantum": [],
+    "hazmat": [],
+    "rooted": []
+  }
+}

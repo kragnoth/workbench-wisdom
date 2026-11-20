@@ -1,7 +1,7 @@
 package com.kragnoth.workbenchwisdom.compat.jei;
 
-import com.kragnoth.workbenchwisdom.ReforgingRecipe;
 import com.kragnoth.workbenchwisdom.WorkbenchWisdom;
+import com.kragnoth.workbenchwisdom.rules.BenchRules;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -12,13 +12,13 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
-/** Item + so many of the next tier's material -> the upgraded item (enchantments kept). */
-class UpgradeCategory implements IRecipeCategory<RecipeHolder<ReforgingRecipe>> {
+/** Item + so many of the next tier's material -> the upgraded item, enchantments kept. */
+class UpgradeCategory implements IRecipeCategory<BenchRules.Upgrade> {
     private final IDrawable icon;
     private final IDrawable slot;
     private final IDrawable plus;
@@ -32,7 +32,7 @@ class UpgradeCategory implements IRecipeCategory<RecipeHolder<ReforgingRecipe>> 
     }
 
     @Override
-    public RecipeType<RecipeHolder<ReforgingRecipe>> getRecipeType() {
+    public RecipeType<BenchRules.Upgrade> getRecipeType() {
         return WorkbenchWisdomJei.UPGRADES;
     }
 
@@ -57,21 +57,20 @@ class UpgradeCategory implements IRecipeCategory<RecipeHolder<ReforgingRecipe>> 
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder b, RecipeHolder<ReforgingRecipe> holder, IFocusGroup focuses) {
-        ReforgingRecipe r = holder.value();
-        b.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(r.base()).setBackground(slot, -1, -1);
+    public void setRecipe(IRecipeLayoutBuilder b, BenchRules.Upgrade u, IFocusGroup focuses) {
+        b.addSlot(RecipeIngredientRole.INPUT, 1, 1).addItemStack(new ItemStack(u.from())).setBackground(slot, -1, -1);
         List<ItemStack> mats = new ArrayList<>();
-        for (ItemStack s : r.addition().getItems()) {
-            mats.add(s.copyWithCount(r.count()));
+        for (ItemStack s : u.material().getItems()) {
+            mats.add(s.copyWithCount(u.count()));
         }
         b.addSlot(RecipeIngredientRole.INPUT, 40, 1).addItemStacks(mats).setBackground(slot, -1, -1);
-        b.addSlot(RecipeIngredientRole.OUTPUT, 98, 1).addItemStack(r.result()).setBackground(slot, -1, -1);
+        b.addSlot(RecipeIngredientRole.OUTPUT, 98, 1).addItemStack(new ItemStack(u.to())).setBackground(slot, -1, -1);
     }
 
     @Override
-    public void draw(RecipeHolder<ReforgingRecipe> holder, IRecipeSlotsView view, GuiGraphics g, double mx, double my) {
+    public void draw(BenchRules.Upgrade u, IRecipeSlotsView view, GuiGraphics g, double mx, double my) {
         plus.draw(g, 22, 3);
         arrow.draw(g, 64, 1);
-        g.drawString(net.minecraft.client.Minecraft.getInstance().font, Component.translatable("jei.workbenchwisdom.keeps"), 1, 21, 0xFF808080, false);
+        g.drawString(Minecraft.getInstance().font, Component.translatable("jei.workbenchwisdom.keeps"), 1, 21, 0xFF808080, false);
     }
 }

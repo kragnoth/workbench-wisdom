@@ -1,0 +1,146 @@
+{
+  "materials": {
+    "wooden": [
+      {
+        "to": "stone",
+        "ingredient": {
+          "tag": "c:cobblestones"
+        }
+      }
+    ],
+    "wood": [
+      {
+        "to": "stone",
+        "ingredient": {
+          "tag": "c:cobblestones"
+        }
+      }
+    ],
+    "stone": [
+      {
+        "to": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "leather": [
+      {
+        "to": "chainmail",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "chainmail": [
+      {
+        "to": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "flint": [
+      {
+        "to": "copper",
+        "ingredient": {
+          "tag": "c:ingots/copper"
+        }
+      }
+    ],
+    "copper": [
+      {
+        "to": "bronze",
+        "ingredient": {
+          "tag": "c:ingots/bronze"
+        }
+      },
+      {
+        "to": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "bronze": [
+      {
+        "to": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "iron": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      },
+      {
+        "to": "osmium",
+        "ingredient": {
+          "tag": "c:ingots/osmium"
+        }
+      }
+    ],
+    "golden": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "gold": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "diamond": [
+      {
+        "to": "netherite",
+        "ingredient": {
+          "tag": "c:ingots/netherite"
+        }
+      }
+    ],
+    "lapis_lazuli": [
+      {
+        "to": "iron",
+        "ingredient": {
+          "tag": "c:ingots/iron"
+        }
+      }
+    ],
+    "osmium": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "steel": [
+      {
+        "to": "dark_steel",
+        "ingredient": {
+          "item": "enderio:dark_steel_ingot"
+        }
+      }
+    ],
+    "emerald": [
+      {
+        "to": "diamond",
+        "ingredient": {
+          "tag": "c:gems/diamond"
+        }
+      }
+    ],
+    "netherite": [],
+    "turtle": []
+  }
+}
